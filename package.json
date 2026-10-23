@@ -1,0 +1,10 @@
+{
+  "name": "pngtext",
+  "private": true,
+  "scripts": {
+    "dev": "browser-sync start --server --files \"*.html\" \"*.css\" \"*.js\" \"*.svg\" \"*.webmanifest\" --port 8000 --no-notify --no-open --no-ghost-mode"
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.3"
+  }
+}

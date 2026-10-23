@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f5f4fa" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#121019" media="(prefers-color-scheme: dark)" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>PNG Text</title>
@@ -13,72 +13,115 @@
   <link rel="apple-touch-icon" href="icon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@500&family=Schibsted+Grotesk:wght@400;500;600&display=swap" />
   <link id="font-css" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="app">
-    <section class="preview" id="preview" data-bg="gray">
+    <section class="preview" id="preview" data-bg="checker">
       <canvas id="canvas" aria-label="Rendered text preview"></canvas>
-      <button class="bg-toggle" id="bg-toggle" type="button" aria-label="Change preview background"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
+      <div class="preview-meta" id="size" aria-label="PNG size"></div>
+      <button class="bg-toggle" id="bg-toggle" type="button" aria-label="Change preview background" title="Change preview background"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
     </section>
 
     <section class="controls">
-      <textarea id="text" rows="2" placeholder="Type your text…" autocomplete="off" autocapitalize="sentences" spellcheck="false"></textarea>
-
-      <div class="row">
-        <div class="label">Font</div>
-        <div class="chips" id="fonts" role="listbox" aria-label="Font"></div>
-      </div>
-
-      <div class="row">
-        <div class="label">Style</div>
-        <div class="segmented" id="styles">
-          <button type="button" data-style="plain">Plain</button>
-          <button type="button" data-style="highlight">Box</button>
-          <button type="button" data-style="outline">Outline</button>
-          <button type="button" data-style="shadow">Shadow</button>
-          <button type="button" data-style="neon">Neon</button>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="label">Text color</div>
-        <div class="swatches" id="text-colors"></div>
-      </div>
-
-      <div class="row" id="accent-row">
-        <div class="label" id="accent-label">Box color</div>
-        <div class="swatches" id="accent-colors"></div>
-      </div>
-
-      <div class="row inline">
+      <div class="panel" id="panel-text" role="tabpanel" aria-labelledby="tab-text" hidden>
+        <textarea id="text" rows="5" placeholder="Type your text…" aria-label="Text" autocomplete="off" autocapitalize="sentences" spellcheck="false"></textarea>
         <div class="segmented compact" id="align">
           <button type="button" data-align="left" aria-label="Align left"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h14"/><path d="M2 8h9"/><path d="M2 12h11"/></svg></button>
           <button type="button" data-align="center" aria-label="Align center"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h14"/><path d="M4.5 8h9.0"/><path d="M3.5 12h11.0"/></svg></button>
           <button type="button" data-align="right" aria-label="Align right"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h14"/><path d="M7 8h9"/><path d="M5 12h11"/></svg></button>
         </div>
         <label class="slider">
-          <span>Width</span>
+          <span class="slider-head">Wrap width <output for="width" id="width-out"></output></span>
           <input type="range" id="width" min="3" max="20" step="0.5" />
         </label>
-      </div>
-
-      <div class="row inline">
         <label class="slider">
-          <span>Spacing</span>
+          <span class="slider-head">Spacing <output for="spacing" id="spacing-out"></output></span>
           <input type="range" id="spacing" min="-0.1" max="0.4" step="0.01" />
         </label>
         <label class="slider">
-          <span>Line height</span>
+          <span class="slider-head">Line height <output for="leading" id="leading-out"></output></span>
           <input type="range" id="leading" min="0.8" max="1.8" step="0.05" />
         </label>
       </div>
+
+      <div class="panel" id="panel-font" role="tabpanel" aria-labelledby="tab-font" hidden>
+        <label class="slider weight-bar">
+          <span class="slider-head">Weight <output for="weight" id="weight-out"></output></span>
+          <input type="range" id="weight" min="0" step="1" />
+        </label>
+        <div class="font-groups" id="fonts" role="listbox" aria-label="Font"></div>
+      </div>
+
+      <div class="panel" id="panel-style" role="tabpanel" aria-labelledby="tab-style" hidden>
+        <div class="segmented" id="styles">
+          <button type="button" data-style="plain">Plain</button>
+          <button type="button" data-style="highlight">Box</button>
+          <button type="button" data-style="outline">Outline</button>
+          <button type="button" data-style="shadow">Shadow</button>
+          <button type="button" data-style="neon">Glow</button>
+        </div>
+        <div class="row" id="accent-row">
+          <div class="label" id="accent-label">Box color</div>
+          <div class="swatches" id="accent-colors"></div>
+        </div>
+        <div class="row" id="corners-row">
+          <div class="label">Corners</div>
+          <div class="segmented" id="corners">
+            <button type="button" data-radius="none">None</button>
+            <button type="button" data-radius="sm">Small</button>
+            <button type="button" data-radius="md">Medium</button>
+            <button type="button" data-radius="lg">Large</button>
+          </div>
+        </div>
+        <div class="style-sliders" id="style-sliders"></div>
+      </div>
+
+      <div class="panel" id="panel-color" role="tabpanel" aria-labelledby="tab-color" hidden>
+        <div class="picker" id="picker">
+          <div class="sv" id="sv" tabindex="0" role="slider" aria-label="Saturation and brightness">
+            <div class="sv-thumb" id="sv-thumb"></div>
+          </div>
+          <input type="range" class="hue" id="hue" min="0" max="359" step="1" aria-label="Hue" />
+          <label class="hex">
+            <span class="hex-dot" id="hex-dot"></span>
+            <span class="hex-hash">#</span>
+            <input type="text" id="hex" maxlength="7" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Hex color" />
+          </label>
+        </div>
+        <div class="preset-groups" id="text-colors" aria-label="Preset colors"></div>
+      </div>
     </section>
 
-    <footer class="actions">
-      <button class="secondary" id="share" type="button">Share / Save</button>
-      <button class="primary" id="copy" type="button">Copy PNG</button>
+    <footer class="bar">
+      <div class="tabs" id="tabs" role="tablist" aria-label="Edit">
+        <button type="button" role="tab" id="tab-text" data-panel="text" aria-controls="panel-text">
+          <span class="tab-tile"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 5V3.5h10V5"/><path d="M9 3.5V16"/><path d="M7 16h4"/><path d="M15.5 11v6"/></svg></span>
+          <span class="tab-label">Text</span>
+        </button>
+        <button type="button" role="tab" id="tab-font" data-panel="font" aria-controls="panel-font">
+          <span class="tab-tile"><span class="tab-glyph" id="tab-font-glyph">Aa</span></span>
+          <span class="tab-label">Font</span>
+        </button>
+        <button type="button" role="tab" id="tab-style" data-panel="style" aria-controls="panel-style">
+          <span class="tab-tile"><span class="tab-glyph" id="tab-style-glyph">A</span></span>
+          <span class="tab-label">Style</span>
+        </button>
+        <button type="button" role="tab" id="tab-color" data-panel="color" aria-controls="panel-color">
+          <span class="tab-tile"><span class="tab-dot"></span></span>
+          <span class="tab-label">Color</span>
+        </button>
+      </div>
+      <button class="bar-action" id="share" type="button">
+        <span class="tab-tile"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12.5V3"/><path d="M6.5 6.5 10 3l3.5 3.5"/><path d="M6 9.5H5a1.5 1.5 0 0 0-1.5 1.5v4.5A1.5 1.5 0 0 0 5 17h10a1.5 1.5 0 0 0 1.5-1.5V11A1.5 1.5 0 0 0 15 9.5h-1"/></svg></span>
+        <span class="tab-label">Save or share</span>
+      </button>
+      <button class="bar-action primary" id="copy" type="button">
+        <span class="tab-tile"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="6.5" y="6.5" width="10" height="10" rx="2"/><path d="M13.5 6.5V5A1.5 1.5 0 0 0 12 3.5H5A1.5 1.5 0 0 0 3.5 5v7A1.5 1.5 0 0 0 5 13.5h1.5"/></svg></span>
+        <span class="tab-label">Copy PNG</span>
+      </button>
     </footer>
   </main>
 

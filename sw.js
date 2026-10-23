@@ -1,5 +1,5 @@
 // Network-first cache so the app opens offline after the first visit.
-const CACHE = 'pngtext-v1';
+const CACHE = 'pngtext-v2';
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));

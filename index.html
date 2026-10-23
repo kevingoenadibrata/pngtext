@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+  <meta name="theme-color" content="#0b0b0f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>PNG Text</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link id="font-css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="preview" id="preview" data-bg="dark">
+      <canvas id="canvas" aria-label="Rendered text preview"></canvas>
+      <button class="bg-toggle" id="bg-toggle" type="button" aria-label="Change preview background">◐</button>
+    </section>
+
+    <section class="controls">
+      <textarea id="text" rows="2" placeholder="Type your text…" autocomplete="off" autocapitalize="sentences" spellcheck="false"></textarea>
+
+      <div class="row">
+        <div class="label">Font</div>
+        <div class="chips" id="fonts" role="listbox" aria-label="Font"></div>
+      </div>
+
+      <div class="row">
+        <div class="label">Style</div>
+        <div class="segmented" id="styles">
+          <button type="button" data-style="plain">Plain</button>
+          <button type="button" data-style="highlight">Box</button>
+          <button type="button" data-style="outline">Outline</button>
+          <button type="button" data-style="shadow">Shadow</button>
+          <button type="button" data-style="neon">Neon</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="label">Text color</div>
+        <div class="swatches" id="text-colors"></div>
+      </div>
+
+      <div class="row" id="accent-row">
+        <div class="label" id="accent-label">Box color</div>
+        <div class="swatches" id="accent-colors"></div>
+      </div>
+
+      <div class="row inline">
+        <div class="segmented compact" id="align">
+          <button type="button" data-align="left" aria-label="Align left">⟸</button>
+          <button type="button" data-align="center" aria-label="Align center">≡</button>
+          <button type="button" data-align="right" aria-label="Align right">⟹</button>
+        </div>
+        <label class="slider">
+          <span>Width</span>
+          <input type="range" id="width" min="3" max="20" step="0.5" />
+        </label>
+      </div>
+
+      <div class="row inline">
+        <label class="slider">
+          <span>Spacing</span>
+          <input type="range" id="spacing" min="-0.1" max="0.4" step="0.01" />
+        </label>
+        <label class="slider">
+          <span>Line height</span>
+          <input type="range" id="leading" min="0.8" max="1.8" step="0.05" />
+        </label>
+      </div>
+    </section>
+
+    <footer class="actions">
+      <button class="secondary" id="share" type="button">Share / Save</button>
+      <button class="primary" id="copy" type="button">Copy PNG</button>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

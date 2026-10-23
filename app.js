@@ -178,6 +178,10 @@
     copy: $('copy'),
     share: $('share'),
     toast: $('toast'),
+    presetName: $('preset-name'),
+    savePreset: $('save-preset'),
+    loadPreset: $('load-preset'),
+    presetFile: $('preset-file'),
   };
 
   const state = loadState();
@@ -271,9 +275,9 @@
 
   // Draws onto an oversized scratch canvas, then crops to the visible pixels so
   // swashy script fonts and glows never get clipped.
-  function render() {
+  function render(source = state.text) {
     const font = currentFont();
-    const text = state.text.trim() ? state.text.replace(/\s+$/, '') : ' ';
+    const text = source.trim() ? source.replace(/\s+$/, '') : ' ';
     const F = FONT_PX;
 
     const scratch = document.createElement('canvas');
@@ -515,8 +519,15 @@
   async function sharePng() {
     let blob;
     try { blob = await currentPng(); } catch { toast("Couldn't render the PNG. Try editing the text again."); return; }
-    const file = new File([blob], fileName(), { type: 'image/png' });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    shareFile(blob, fileName(), 'Saved PNG');
+  }
+
+  // Phones and tablets get the share sheet (straight to Photos/Instagram); desktops
+  // just download, since a share popover there is an extra step.
+  async function shareFile(blob, name, savedMessage) {
+    const file = new File([blob], name, { type: 'image/png' });
+    const touch = matchMedia('(pointer: coarse)').matches;
+    if (touch && navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({ files: [file] });
         return;
@@ -532,7 +543,187 @@
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 10_000);
-    toast('Saved PNG');
+    toast(savedMessage);
+  }
+
+  // ---------- presets ----------
+
+  // A preset is the look (everything but the text), carried in a link:
+  //   <app url>#p=1.<base64url JSON [name, ...values in PRESET_KEYS order]>
+  // The link goes in a QR code on a shareable card. Scanning it opens the app with the
+  // preset applied; uploading the card decodes the same link.
+  // Append new keys at the end only. Never reorder, or old cards decode wrong.
+  const PRESET_KEYS = [
+    'font', 'weight', 'style', 'color', 'accent', 'align', 'width', 'spacing', 'leading',
+    'boxWidth', 'boxHeight', 'boxRadius', 'outlineThickness',
+    'shadowOpacity', 'shadowDistance', 'shadowAngle', 'shadowSize', 'glowOpacity', 'glowSize',
+  ];
+  const STYLE_NAMES = { plain: 'Plain', highlight: 'Box', outline: 'Outline', shadow: 'Shadow', neon: 'Glow' };
+  const HEX = /^#[0-9a-f]{6}$/i;
+
+  // Preset cards show this pangram instead of the user's text, so every letter
+  // of the preset's font is on the card.
+  const SAMPLE_TEXT = 'The five boxing wizards jump quickly';
+  const SITE_URL = 'https://text.kevingo.me';
+
+  function presetUrl(name) {
+    const json = JSON.stringify([name, ...PRESET_KEYS.map((k) => state[k])]);
+    const b64 = btoa(String.fromCharCode(...new TextEncoder().encode(json)))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return `${location.origin}${location.pathname}#p=1.${b64}`;
+  }
+
+  // Returns { name, patch } or null if the string isn't a preset this version understands.
+  function parsePreset(str) {
+    const m = /#p=1\.([\w-]+)/.exec(str);
+    if (!m) return null;
+    let values;
+    try {
+      const bin = atob(m[1].replace(/-/g, '+').replace(/_/g, '/'));
+      values = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0))));
+    } catch {
+      return null;
+    }
+    if (!Array.isArray(values) || typeof values[0] !== 'string') return null;
+
+    const valid = {
+      font: (v) => FONTS.some((f) => f.family === v),
+      weight: (v) => v === null || Number.isFinite(v),
+      style: (v) => v in STYLE_NAMES,
+      color: (v) => HEX.test(v),
+      accent: (v) => v === 'none' || HEX.test(v),
+      align: (v) => ['left', 'center', 'right'].includes(v),
+      boxRadius: (v) => v in BOX_RADIUS,
+    };
+    const patch = {};
+    PRESET_KEYS.forEach((key, i) => {
+      const v = values[i + 1];
+      if (v === undefined) return;
+      if (valid[key] ? valid[key](v) : Number.isFinite(v)) patch[key] = v;
+    });
+    return { name: values[0], patch };
+  }
+
+  function applyPreset(preset) {
+    update(preset.patch);
+    toast(`Applied preset “${preset.name}”`);
+  }
+
+  // A 1080×1350 card: the sample pangram in this look on the checker, then the
+  // preset name, the site address, and a QR code linking back to the app.
+  async function makePresetCard(name) {
+    const W = 1080, H = 1350, STAGE = 960, PAD = 60;
+    const font = currentFont();
+    await Promise.all([
+      ensureFont(font, SAMPLE_TEXT),
+      document.fonts.load('600 64px "Schibsted Grotesk"'),
+      document.fonts.load('500 24px "Martian Mono"'),
+    ]).catch(() => {});
+
+    const card = document.createElement('canvas');
+    card.width = W;
+    card.height = H;
+    const ctx = card.getContext('2d');
+
+    ctx.fillStyle = '#aaa5bb';
+    ctx.fillRect(0, 0, W, STAGE);
+    ctx.fillStyle = '#9d98af';
+    for (let y = 0; y < STAGE; y += 40) {
+      for (let x = (y / 40) % 2 ? 40 : 0; x < W; x += 80) ctx.fillRect(x, y, 40, 40);
+    }
+    const sample = render(SAMPLE_TEXT);
+    const fit = Math.min((W - PAD * 2) / sample.width, (STAGE - PAD * 2) / sample.height, 1.5);
+    const sw = sample.width * fit, sh = sample.height * fit;
+    ctx.drawImage(sample, (W - sw) / 2, (STAGE - sh) / 2, sw, sh);
+
+    ctx.fillStyle = '#f5f4fa';
+    ctx.fillRect(0, STAGE, W, H - STAGE);
+
+    // QR with its 4-module quiet zone on white.
+    const qr = qrcode(0, 'M');
+    qr.addData(presetUrl(name));
+    qr.make();
+    const n = qr.getModuleCount();
+    const cell = Math.floor(300 / (n + 8));
+    const qrSize = cell * (n + 8);
+    const qx = W - PAD - qrSize, qy = STAGE + (H - STAGE - qrSize) / 2;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(qx, qy, qrSize, qrSize);
+    ctx.fillStyle = '#17141f';
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (qr.isDark(r, c)) ctx.fillRect(qx + (c + 4) * cell, qy + (r + 4) * cell, cell, cell);
+      }
+    }
+
+    const textW = qx - PAD * 2;
+    const fitText = (text, maxW) => {
+      if (ctx.measureText(text).width <= maxW) return text;
+      while (text && ctx.measureText(`${text}…`).width > maxW) text = text.slice(0, -1);
+      return `${text}…`;
+    };
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#6d6880';
+    ctx.font = '500 24px "Martian Mono", monospace';
+    ctx.fillText('PNG TEXT PRESET', PAD, STAGE + 84);
+    ctx.fillStyle = '#17141f';
+    ctx.font = '600 64px "Schibsted Grotesk", sans-serif';
+    ctx.fillText(fitText(name, textW), PAD, STAGE + 168);
+    ctx.fillStyle = '#3b2eff';
+    ctx.font = '500 24px "Martian Mono", monospace';
+    ctx.fillText(fitText(SITE_URL, textW), PAD, STAGE + 222);
+    ctx.fillStyle = '#6d6880';
+    ctx.font = '500 24px "Martian Mono", monospace';
+    ctx.fillText(fitText('Scan with your camera to apply', textW), PAD, H - 64);
+
+    return canvasToBlob(card);
+  }
+
+  async function savePreset() {
+    const name = els.presetName.value.trim();
+    if (!name) {
+      els.presetName.focus();
+      toast('Name your preset first');
+      return;
+    }
+    let blob;
+    try { blob = await makePresetCard(name); } catch { toast("Couldn't create the preset image. Try again."); return; }
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 30);
+    shareFile(blob, `${slug || 'preset'}-preset.png`, 'Saved preset image');
+  }
+
+  // The QR reader is 130 KB, so it only loads when someone loads a preset.
+  let jsQRReady = null;
+  function loadJsQR() {
+    jsQRReady ||= new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'vendor/jsQR.min.js';
+      s.onload = () => resolve(window.jsQR);
+      s.onerror = () => { jsQRReady = null; reject(new Error('jsQR failed to load')); };
+      document.head.appendChild(s);
+    });
+    return jsQRReady;
+  }
+
+  async function loadPresetFromFile(file) {
+    let code;
+    try {
+      const [jsQR, bitmap] = await Promise.all([loadJsQR(), createImageBitmap(file)]);
+      const fit = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(bitmap.width * fit);
+      c.height = Math.round(bitmap.height * fit);
+      const ctx = c.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(bitmap, 0, 0, c.width, c.height);
+      code = jsQR(ctx.getImageData(0, 0, c.width, c.height).data, c.width, c.height);
+    } catch {
+      toast("Couldn't read that image. Try a different photo.");
+      return;
+    }
+    if (!code) { toast('No QR code found. Try a clearer screenshot of the preset card.', 3200); return; }
+    const preset = parsePreset(code.data);
+    if (!preset) { toast("That QR code isn't a PNG Text preset.", 3200); return; }
+    applyPreset(preset);
   }
 
   // ---------- UI ----------
@@ -867,6 +1058,14 @@
     });
 
     els.copy.addEventListener('click', copyPng);
+    els.savePreset.addEventListener('click', savePreset);
+    els.presetName.addEventListener('keydown', (e) => { if (e.key === 'Enter') savePreset(); });
+    els.loadPreset.addEventListener('click', () => els.presetFile.click());
+    els.presetFile.addEventListener('change', () => {
+      const file = els.presetFile.files[0];
+      els.presetFile.value = '';
+      if (file) loadPresetFromFile(file);
+    });
     els.share.addEventListener('click', sharePng);
 
     // Fonts arriving late (slow network) should re-render the preview.
@@ -884,6 +1083,14 @@
   bindControls();
   syncUI();
   scheduleRender();
+
+  // Opened from a preset QR code: apply it, then drop the hash so a reload doesn't reapply.
+  if (location.hash.startsWith('#p=')) {
+    const preset = parsePreset(location.hash);
+    history.replaceState(null, '', location.pathname + location.search);
+    if (preset) applyPreset(preset);
+    else toast("That preset link is damaged or from a newer version.", 3200);
+  }
 
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     navigator.serviceWorker.register('sw.js').catch(() => {});

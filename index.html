@@ -93,6 +93,21 @@
         </div>
         <div class="preset-groups" id="text-colors" aria-label="Preset colors"></div>
       </div>
+
+      <div class="panel" id="panel-presets" role="tabpanel" aria-labelledby="tab-presets" hidden>
+        <div class="row">
+          <div class="label">Save preset</div>
+          <p class="hint">Saves your font, style and colors as an image with a QR code. Your text isn't included.</p>
+          <input type="text" class="field" id="preset-name" placeholder="Name this preset" maxlength="40" autocomplete="off" aria-label="Preset name" />
+          <button type="button" class="button primary" id="save-preset">Save preset image</button>
+        </div>
+        <div class="row">
+          <div class="label">Load preset</div>
+          <p class="hint">Choose a preset image from your photos, or scan its QR code with your phone camera.</p>
+          <button type="button" class="button" id="load-preset">Choose image</button>
+          <input type="file" id="preset-file" accept="image/*" hidden />
+        </div>
+      </div>
     </section>
 
     <footer class="bar">
@@ -113,6 +128,10 @@
           <span class="tab-tile"><span class="tab-dot"></span></span>
           <span class="tab-label">Color</span>
         </button>
+        <button type="button" role="tab" id="tab-presets" data-panel="presets" aria-controls="panel-presets">
+          <span class="tab-tile"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M5.5 3h9v14l-4.5-3.5L5.5 17z"/></svg></span>
+          <span class="tab-label">Presets</span>
+        </button>
       </div>
       <button class="bar-action" id="share" type="button">
         <span class="tab-tile"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12.5V3"/><path d="M6.5 6.5 10 3l3.5 3.5"/><path d="M6 9.5H5a1.5 1.5 0 0 0-1.5 1.5v4.5A1.5 1.5 0 0 0 5 17h10a1.5 1.5 0 0 0 1.5-1.5V11A1.5 1.5 0 0 0 15 9.5h-1"/></svg></span>
@@ -127,6 +146,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="vendor/qrcode.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

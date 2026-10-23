@@ -83,6 +83,24 @@ svg { display: block; }
 }
 .preview[data-bg="light"] { background: #ffffff; box-shadow: inset 0 0 0 1px var(--line); }
 .preview[data-bg="dark"] { background: #17141f; }
+/* Soft blurred blobs, like a phone wallpaper or a defocused photo. */
+.preview[data-bg="mesh"] {
+  background-color: #e8dff5;
+  background-image:
+    radial-gradient(at 12% 18%, #ffc2d4 0, transparent 55%),
+    radial-gradient(at 88% 12%, #b8c4ff 0, transparent 50%),
+    radial-gradient(at 78% 88%, #9ee6d8 0, transparent 55%),
+    radial-gradient(at 20% 90%, #ffe1a8 0, transparent 50%),
+    radial-gradient(at 50% 50%, #d9c2ff 0, transparent 60%);
+}
+/* A busy real-world photo, the hardest case for legibility. Photo: Ali Choubin on Unsplash. */
+.preview[data-bg="photo"] { background: #2a2420 url("assets/backdrop-photo.jpg") center / cover no-repeat; }
+/* A repeating tile of simple shapes on a pastel ground. */
+.preview[data-bg="shapes"] {
+  background-color: #f3e9dc;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Ccircle cx='18' cy='20' r='9' fill='%23f2a28b'/%3E%3Crect x='58' y='10' width='18' height='18' rx='3' fill='%2386b6a8' transform='rotate(18 67 19)'/%3E%3Cpath d='M20 62 l12 22 h-24z' fill='%23e9c46a'/%3E%3Cpath d='M58 70 q8 -12 16 0 t16 0' fill='none' stroke='%239a8fd6' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 96px 96px;
+}
 
 /* Absolutely sized so tall renders scale down instead of overflowing the stage. */
 #canvas {
@@ -99,20 +117,6 @@ svg { display: block; }
   0%   { transform: none; filter: none; }
   35%  { transform: translateY(-8px) rotate(-2.5deg) scale(1.05); filter: drop-shadow(0 14px 10px rgba(23, 20, 31, .35)); }
   100% { transform: none; filter: none; }
-}
-
-.preview-meta {
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
-  font: 500 10px/1 var(--mono);
-  letter-spacing: .02em;
-  padding: 6px 8px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, .85);
-  color: #17141f;
-  pointer-events: none;
-  font-variant-numeric: tabular-nums;
 }
 
 .bg-toggle {
@@ -159,7 +163,7 @@ textarea {
 textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
 textarea::placeholder { color: var(--muted); }
 
-/* Two-step editing: pick a group, then adjust it. Each tab previews its current value on a mini checker. */
+/* Two-step editing: pick a group, then adjust it. */
 .tabs { display: contents; }
 .tabs [role="tab"], .bar-action {
   border: 0;
@@ -179,11 +183,8 @@ textarea::placeholder { color: var(--muted); }
   border-radius: 11px;
   display: grid;
   place-items: center;
-  overflow: hidden;
-  background-color: var(--checker-a);
-  background-image: conic-gradient(var(--checker-b) 25%, transparent 0 50%, var(--checker-b) 0 75%, transparent 0);
-  background-size: 10px 10px;
-  color: var(--tab-fg, #fff);
+  background: var(--surface);
+  color: var(--text);
   transition: box-shadow .15s;
 }
 .tab-label {
@@ -199,13 +200,6 @@ textarea::placeholder { color: var(--muted); }
 .tabs [role="tab"]:focus-visible { outline: none; }
 .tabs [role="tab"]:focus-visible .tab-tile { outline: 2px solid var(--accent); outline-offset: 4px; }
 
-.tab-glyph { font-size: 22px; line-height: 1; white-space: nowrap; }
-#tab-style-glyph { font: 700 22px/1 var(--ui); padding: 3px 6px; border-radius: 5px; }
-#tab-style-glyph[data-style="highlight"] { background: var(--tab-accent); }
-#tab-style-glyph[data-style="outline"] { -webkit-text-stroke: 4px var(--tab-accent); paint-order: stroke fill; }
-#tab-style-glyph[data-style="shadow"] { text-shadow: 1.5px 2px 2px var(--tab-accent); }
-#tab-style-glyph[data-style="neon"] { text-shadow: 0 0 2px var(--tab-accent), 0 0 8px var(--tab-accent); }
-.tab-dot { width: 22px; height: 22px; border-radius: 50%; background: var(--tab-fg); box-shadow: 0 0 0 1px rgba(23, 20, 31, .2); }
 
 .panel { display: flex; flex-direction: column; gap: 20px; }
 .panel .chips, .panel .swatches { flex-wrap: wrap; overflow: visible; margin: 0; padding: 4px 0; }
@@ -438,7 +432,6 @@ input[type="range"] { width: 100%; margin: 0; height: 32px; accent-color: var(--
 }
 .bar::-webkit-scrollbar { display: none; }
 .bar-action { min-width: 96px; }
-.bar-action .tab-tile { background: var(--surface); color: var(--text); }
 .bar-action.primary .tab-tile { background: var(--accent); color: var(--on-accent); }
 .bar-action.primary .tab-label { color: var(--text); }
 .bar-action .tab-tile { transition: transform .1s, opacity .15s; }

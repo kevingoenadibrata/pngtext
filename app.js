@@ -74,6 +74,9 @@
     ['Retro', ['#e63946', '#f4a261', '#e9c46a', '#2a9d8f', '#264653', '#457b9d', '#a8dadc', '#f1faee']],
   ];
 
+  // Preview-only backdrops (the PNG stays transparent), in the order the button cycles.
+  const BACKDROPS = { checker: 'Transparent', light: 'Light', dark: 'Dark', mesh: 'Gradient mesh', shapes: 'Shapes', photo: 'Photo' };
+
   const STYLE_ACCENT_LABEL = {
     highlight: 'Box color',
     outline: 'Outline color',
@@ -137,6 +140,7 @@
     glowOpacity: 1,
     glowSize: 0.6,
     panel: 'text',
+    backdrop: 'checker',
   };
 
   const STORAGE_KEY = 'pngtext:v1';
@@ -145,12 +149,9 @@
   const els = {
     canvas: $('canvas'),
     preview: $('preview'),
-    size: $('size'),
     bgToggle: $('bg-toggle'),
     text: $('text'),
     tabs: $('tabs'),
-    tabFontGlyph: $('tab-font-glyph'),
-    tabStyleGlyph: $('tab-style-glyph'),
     fonts: $('fonts'),
     weight: $('weight'),
     weightOut: $('weight-out'),
@@ -296,7 +297,8 @@
     const glyphH = ascent + descent;
     // Vertical middle of the visible letters, relative to the baseline.
     const inkMid = ((probe.actualBoundingBoxDescent || 0) - (probe.actualBoundingBoxAscent || ascent)) / 2;
-    const lineH = Math.max(glyphH * state.leading, F * 0.5);
+    // Low values overlap lines on purpose; the floor only keeps lines from collapsing.
+    const lineH = Math.max(glyphH * state.leading, F * 0.1);
 
     const boxPadX = F * state.boxWidth;
     const boxPadY = F * state.boxHeight;
@@ -464,7 +466,6 @@
     view.width = out.width;
     view.height = out.height;
     view.getContext('2d').drawImage(out, 0, 0);
-    els.size.textContent = `${out.width} × ${out.height} px`;
     canvasToBlob(out).then(resolveBlob, rejectBlob);
   }
 
@@ -968,6 +969,13 @@
 
     syncWeights();
     syncTabs();
+    syncBackdrop();
+  }
+
+  function syncBackdrop() {
+    if (!(state.backdrop in BACKDROPS)) state.backdrop = 'checker';
+    els.preview.dataset.bg = state.backdrop;
+    els.bgToggle.title = els.bgToggle.ariaLabel = `Preview backdrop: ${BACKDROPS[state.backdrop]}. Tap to change.`;
   }
 
   function syncTabs() {
@@ -977,13 +985,6 @@
       t.tabIndex = on ? 0 : -1;
       $(t.getAttribute('aria-controls')).hidden = !on;
     });
-
-    const font = currentFont();
-    els.tabs.style.setProperty('--tab-fg', state.color);
-    els.tabs.style.setProperty('--tab-accent', state.accent === 'none' ? 'transparent' : state.accent);
-    els.tabFontGlyph.style.fontFamily = `"${font.family}", sans-serif`;
-    els.tabFontGlyph.style.fontWeight = font.weight;
-    els.tabStyleGlyph.dataset.style = state.style;
   }
 
   function update(patch) {
@@ -1051,10 +1052,13 @@
       els[key].addEventListener('input', () => update({ [key]: parseFloat(els[key].value) }));
     }
 
-    const backgrounds = ['checker', 'light', 'dark'];
     els.bgToggle.addEventListener('click', () => {
-      const i = backgrounds.indexOf(els.preview.dataset.bg);
-      els.preview.dataset.bg = backgrounds[(i + 1) % backgrounds.length];
+      const keys = Object.keys(BACKDROPS);
+      const next = keys[(keys.indexOf(state.backdrop) + 1) % keys.length];
+      state.backdrop = next;
+      saveState();
+      syncBackdrop();
+      toast(`Backdrop: ${BACKDROPS[next]}`, 1200);
     });
 
     els.copy.addEventListener('click', copyPng);

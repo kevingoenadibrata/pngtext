@@ -21,17 +21,16 @@
   <main class="app">
     <section class="preview" id="preview" data-bg="checker">
       <canvas id="canvas" aria-label="Rendered text preview"></canvas>
-      <div class="preview-meta" id="size" aria-label="PNG size"></div>
-      <button class="bg-toggle" id="bg-toggle" type="button" aria-label="Change preview background" title="Change preview background"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
+      <button class="bg-toggle" id="bg-toggle" type="button" aria-label="Change preview background" title="Change preview background"><svg class="icon" width="18" height="18" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm12,24.87a83.53,83.53,0,0,1,24,7.25V203.88a83.53,83.53,0,0,1-24,7.25ZM44,128a84.12,84.12,0,0,1,72-83.13V211.13A84.12,84.12,0,0,1,44,128Zm144,58.71V69.29a83.81,83.81,0,0,1,0,117.42Z"/></svg></button>
     </section>
 
     <section class="controls">
       <div class="panel" id="panel-text" role="tabpanel" aria-labelledby="tab-text" hidden>
         <textarea id="text" rows="5" placeholder="Type your text…" aria-label="Text" autocomplete="off" autocapitalize="sentences" spellcheck="false"></textarea>
         <div class="segmented compact" id="align">
-          <button type="button" data-align="left" aria-label="Align left"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h14"/><path d="M2 8h9"/><path d="M2 12h11"/></svg></button>
-          <button type="button" data-align="center" aria-label="Align center"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h14"/><path d="M4.5 8h9.0"/><path d="M3.5 12h11.0"/></svg></button>
-          <button type="button" data-align="right" aria-label="Align right"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h14"/><path d="M7 8h9"/><path d="M5 12h11"/></svg></button>
+          <button type="button" data-align="left" aria-label="Align left"><svg class="icon" width="18" height="18" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M28,64A12,12,0,0,1,40,52H216a12,12,0,0,1,0,24H40A12,12,0,0,1,28,64Zm12,52H168a12,12,0,0,0,0-24H40a12,12,0,0,0,0,24Zm176,16H40a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Zm-48,40H40a12,12,0,0,0,0,24H168a12,12,0,0,0,0-24Z"/></svg></button>
+          <button type="button" data-align="center" aria-label="Align center"><svg class="icon" width="18" height="18" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M28,64A12,12,0,0,1,40,52H216a12,12,0,0,1,0,24H40A12,12,0,0,1,28,64ZM64,92a12,12,0,0,0,0,24H192a12,12,0,0,0,0-24Zm152,40H40a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Zm-24,40H64a12,12,0,0,0,0,24H192a12,12,0,0,0,0-24Z"/></svg></button>
+          <button type="button" data-align="right" aria-label="Align right"><svg class="icon" width="18" height="18" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M28,64A12,12,0,0,1,40,52H216a12,12,0,0,1,0,24H40A12,12,0,0,1,28,64ZM216,92H88a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Zm0,40H40a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Zm0,40H88a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Z"/></svg></button>
         </div>
         <label class="slider">
           <span class="slider-head">Wrap width <output for="width" id="width-out"></output></span>
@@ -43,7 +42,7 @@
         </label>
         <label class="slider">
           <span class="slider-head">Line height <output for="leading" id="leading-out"></output></span>
-          <input type="range" id="leading" min="0.8" max="1.8" step="0.05" />
+          <input type="range" id="leading" min="0.3" max="1.8" step="0.05" />
         </label>
       </div>
 
@@ -113,32 +112,32 @@
     <footer class="bar">
       <div class="tabs" id="tabs" role="tablist" aria-label="Edit">
         <button type="button" role="tab" id="tab-text" data-panel="text" aria-controls="panel-text">
-          <span class="tab-tile"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 5V3.5h10V5"/><path d="M9 3.5V16"/><path d="M7 16h4"/><path d="M15.5 11v6"/></svg></span>
+          <span class="tab-tile"><svg class="icon" width="22" height="22" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M212,56V88a12,12,0,0,1-24,0V68H140V188h20a12,12,0,0,1,0,24H96a12,12,0,0,1,0-24h20V68H68V88a12,12,0,0,1-24,0V56A12,12,0,0,1,56,44H200A12,12,0,0,1,212,56Z"/></svg></span>
           <span class="tab-label">Text</span>
         </button>
         <button type="button" role="tab" id="tab-font" data-panel="font" aria-controls="panel-font">
-          <span class="tab-tile"><span class="tab-glyph" id="tab-font-glyph">Aa</span></span>
+          <span class="tab-tile"><svg class="icon" width="22" height="22" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M90.86,50.89a12,12,0,0,0-21.72,0l-64,136a12,12,0,0,0,21.71,10.22L42.44,164h75.12l15.58,33.11a12,12,0,0,0,21.72-10.22ZM53.74,140,80,84.18,106.27,140ZM200,84c-13.85,0-24.77,3.86-32.45,11.48a12,12,0,1,0,16.9,17c3-3,8.26-4.52,15.55-4.52,11,0,20,7.18,20,16v4.39A47.28,47.28,0,0,0,200,124c-24.26,0-44,17.94-44,40s19.74,40,44,40a47.18,47.18,0,0,0,22-5.38A12,12,0,0,0,244,192V124C244,101.94,224.26,84,200,84Zm0,96c-11,0-20-7.18-20-16s9-16,20-16,20,7.18,20,16S211,180,200,180Z"/></svg></span>
           <span class="tab-label">Font</span>
         </button>
         <button type="button" role="tab" id="tab-style" data-panel="style" aria-controls="panel-style">
-          <span class="tab-tile"><span class="tab-glyph" id="tab-style-glyph">A</span></span>
+          <span class="tab-tile"><svg class="icon" width="22" height="22" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M236,32a12,12,0,0,0-12-12c-44.78,0-90,48.54-115.9,82a64,64,0,0,0-80,62c0,12-3.1,22.71-9.23,31.76A43,43,0,0,1,9.4,206.05a11.88,11.88,0,0,0-4.91,13.38A12.07,12.07,0,0,0,16.11,228h76A64,64,0,0,0,154,148C187.49,122.05,236,76.8,236,32ZM209.62,46.39c-4,12.92-13.15,27.49-26.92,42.91-3,3.39-6.16,6.7-9.35,9.89a104.31,104.31,0,0,0-16.5-16.51c3.19-3.19,6.49-6.32,9.88-9.35C182.15,59.55,196.71,50.43,209.62,46.39ZM92.07,204H42a80.17,80.17,0,0,0,10.14-40,40,40,0,1,1,40,40Zm38.18-91.32c3.12-3.93,6.55-8.09,10.23-12.35a80.52,80.52,0,0,1,15.23,15.24c-4.26,3.68-8.42,7.11-12.35,10.23A64.43,64.43,0,0,0,130.25,112.68Z"/></svg></span>
           <span class="tab-label">Style</span>
         </button>
         <button type="button" role="tab" id="tab-color" data-panel="color" aria-controls="panel-color">
-          <span class="tab-tile"><span class="tab-dot"></span></span>
+          <span class="tab-tile"><svg class="icon" width="22" height="22" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M203.57,51A107.9,107.9,0,0,0,20,128c0,44.72,27.6,82.25,72,97.94A36,36,0,0,0,140,192a12,12,0,0,1,12-12h46.21a35.79,35.79,0,0,0,35.1-28A108.6,108.6,0,0,0,236,127.09,107.23,107.23,0,0,0,203.57,51Zm6.34,95.67a11.91,11.91,0,0,1-11.7,9.3H152a36,36,0,0,0-36,36,12,12,0,0,1-16,11.3c-16.65-5.88-30.65-15.76-40.48-28.56A76,76,0,0,1,44,128a84,84,0,0,1,83.13-84H128a84.35,84.35,0,0,1,84,83.29A84.72,84.72,0,0,1,209.91,146.71ZM144,76a16,16,0,1,1-16-16A16,16,0,0,1,144,76Zm-44,24A16,16,0,1,1,84,84,16,16,0,0,1,100,100Zm0,56a16,16,0,1,1-16-16A16,16,0,0,1,100,156Zm88-56a16,16,0,1,1-16-16A16,16,0,0,1,188,100Z"/></svg></span>
           <span class="tab-label">Color</span>
         </button>
         <button type="button" role="tab" id="tab-presets" data-panel="presets" aria-controls="panel-presets">
-          <span class="tab-tile"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M5.5 3h9v14l-4.5-3.5L5.5 17z"/></svg></span>
+          <span class="tab-tile"><svg class="icon" width="22" height="22" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M184,28H72A20,20,0,0,0,52,48V224a12,12,0,0,0,18.36,10.18l57.63-36,57.65,36A12,12,0,0,0,204,224V48A20,20,0,0,0,184,28Zm-4,174.35-45.65-28.53a12,12,0,0,0-12.72,0L76,202.35V52H180Z"/></svg></span>
           <span class="tab-label">Presets</span>
         </button>
       </div>
       <button class="bar-action" id="share" type="button">
-        <span class="tab-tile"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12.5V3"/><path d="M6.5 6.5 10 3l3.5 3.5"/><path d="M6 9.5H5a1.5 1.5 0 0 0-1.5 1.5v4.5A1.5 1.5 0 0 0 5 17h10a1.5 1.5 0 0 0 1.5-1.5V11A1.5 1.5 0 0 0 15 9.5h-1"/></svg></span>
+        <span class="tab-tile"><svg class="icon" width="22" height="22" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M220,112v96a20,20,0,0,1-20,20H56a20,20,0,0,1-20-20V112A20,20,0,0,1,56,92H76a12,12,0,0,1,0,24H60v88H196V116H180a12,12,0,0,1,0-24h20A20,20,0,0,1,220,112ZM96.49,72.49,116,53v83a12,12,0,0,0,24,0V53l19.51,19.52a12,12,0,1,0,17-17l-40-40a12,12,0,0,0-17,0l-40,40a12,12,0,1,0,17,17Z"/></svg></span>
         <span class="tab-label">Save or share</span>
       </button>
       <button class="bar-action primary" id="copy" type="button">
-        <span class="tab-tile"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="6.5" y="6.5" width="10" height="10" rx="2"/><path d="M13.5 6.5V5A1.5 1.5 0 0 0 12 3.5H5A1.5 1.5 0 0 0 3.5 5v7A1.5 1.5 0 0 0 5 13.5h1.5"/></svg></span>
+        <span class="tab-tile"><svg class="icon" width="22" height="22" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,28H88A12,12,0,0,0,76,40V76H40A12,12,0,0,0,28,88V216a12,12,0,0,0,12,12H168a12,12,0,0,0,12-12V180h36a12,12,0,0,0,12-12V40A12,12,0,0,0,216,28ZM156,204H52V100H156Zm48-48H180V88a12,12,0,0,0-12-12H100V52H204Z"/></svg></span>
         <span class="tab-label">Copy PNG</span>
       </button>
     </footer>

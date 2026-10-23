@@ -23,6 +23,8 @@ sheet (send it straight to Instagram) or downloads the PNG.
 - Alignment, wrap width, letter spacing, line height
 - High-res output (150px font size), auto-cropped to the text, transparent background
 - Settings are remembered between visits
+- Preview backdrops: transparent checker, light, dark, gradient mesh, shapes, and a photo
+  (preview only; the PNG stays transparent). Photo by Ali Choubin on Unsplash.
 - Presets: save a look (everything but the text) as an image card with a QR code.
   Scan the QR with a phone camera, or upload the card in the Presets tab, to apply it.
   No backend; the settings live in the QR link. QR libraries are vendored in `vendor/`.

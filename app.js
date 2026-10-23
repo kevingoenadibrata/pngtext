@@ -29,7 +29,7 @@
     { family: 'Cormorant Garamond', weight: 600 },
   ];
 
-  const COLORS = ['#ffffff', '#000000', '#ff3d7f', '#ff8a3d', '#ffd93d', '#3dff8a', '#3dd6ff', '#6b5bff', '#c23dff', '#8b5a2b'];
+  const COLORS = ['#ffffff', '#000000', '#a1a1aa', '#ef4444', '#f97316', '#facc15', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];
 
   const STYLE_ACCENT_LABEL = {
     highlight: 'Box color',
@@ -492,7 +492,7 @@
       if (style !== 'plain' && (state.accent === state.color || state.accent === 'none')) {
         patch.accent = state.color === '#000000' ? '#ffffff' : '#000000';
       }
-      if (style === 'neon' && state.accent === '#000000') patch.accent = '#ff3d7f';
+      if (style === 'neon' && state.accent === '#000000') patch.accent = '#ffffff';
       update(patch);
     });
 
@@ -505,7 +505,7 @@
       els[key].addEventListener('input', () => update({ [key]: parseFloat(els[key].value) }));
     }
 
-    const backgrounds = ['dark', 'checker', 'light', 'black'];
+    const backgrounds = ['gray', 'checker', 'light', 'dark'];
     els.bgToggle.addEventListener('click', () => {
       const i = backgrounds.indexOf(els.preview.dataset.bg);
       els.preview.dataset.bg = backgrounds[(i + 1) % backgrounds.length];

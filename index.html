@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
-  <meta name="theme-color" content="#0b0b0f" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>PNG Text</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
@@ -17,9 +18,9 @@
 </head>
 <body>
   <main class="app">
-    <section class="preview" id="preview" data-bg="dark">
+    <section class="preview" id="preview" data-bg="gray">
       <canvas id="canvas" aria-label="Rendered text preview"></canvas>
-      <button class="bg-toggle" id="bg-toggle" type="button" aria-label="Change preview background">◐</button>
+      <button class="bg-toggle" id="bg-toggle" type="button" aria-label="Change preview background"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg></button>
     </section>
 
     <section class="controls">
@@ -53,9 +54,9 @@
 
       <div class="row inline">
         <div class="segmented compact" id="align">
-          <button type="button" data-align="left" aria-label="Align left">⟸</button>
-          <button type="button" data-align="center" aria-label="Align center">≡</button>
-          <button type="button" data-align="right" aria-label="Align right">⟹</button>
+          <button type="button" data-align="left" aria-label="Align left"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h14"/><path d="M2 8h9"/><path d="M2 12h11"/></svg></button>
+          <button type="button" data-align="center" aria-label="Align center"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h14"/><path d="M4.5 8h9.0"/><path d="M3.5 12h11.0"/></svg></button>
+          <button type="button" data-align="right" aria-label="Align right"><svg width="18" height="16" viewBox="0 0 18 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h14"/><path d="M7 8h9"/><path d="M5 12h11"/></svg></button>
         </div>
         <label class="slider">
           <span>Width</span>
